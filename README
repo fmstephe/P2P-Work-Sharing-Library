@@ -1,0 +1,2 @@
+A P2P work sharing library for parallelsing depth first search algorithms.
+The novel feature of this approach is the lack of a centralised point of control.
