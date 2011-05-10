@@ -6,7 +6,7 @@ import org.francis.p2p.worksharing.network.message.NetworkChange;
 import org.francis.p2p.worksharing.network.message.NetworkChange.ChangeType;
 import org.francis.p2p.worksharing.network.message.NetworkMessage;
 import org.francis.p2p.worksharing.network.message.PropagatableMessage;
-import org.francis.p2p.worksharing.network.message.SatResult;
+import org.francis.p2p.worksharing.network.message.ResultMessage;
 import org.francis.p2p.worksharing.network.message.WorkRequest;
 import org.francis.p2p.worksharing.network.message.WorkResponse;
 
@@ -127,7 +127,7 @@ public class SMPCommunicator implements Communicator {
      * @see org.francis.sat.network.Communicator#sendResult(org.francis.sat.network.message.SatResult)
      */
     @Override
-    public void sendResult(SatResult result) {
+    public void sendResult(ResultMessage result) {
         messageManager.sendResult(result);
     }
     

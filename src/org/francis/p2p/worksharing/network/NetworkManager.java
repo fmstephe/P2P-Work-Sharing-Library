@@ -9,7 +9,7 @@ import java.util.Date;
 import org.francis.p2p.worksharing.network.message.NetworkChange;
 import org.francis.p2p.worksharing.network.message.NetworkChange.ChangeType;
 import org.francis.p2p.worksharing.network.message.NetworkMessage;
-import org.francis.p2p.worksharing.network.message.SatResult;
+import org.francis.p2p.worksharing.network.message.ResultMessage;
 import org.francis.p2p.worksharing.network.message.ShutDownNetwork;
 import org.francis.p2p.worksharing.network.message.WorkRequest;
 import org.francis.p2p.worksharing.network.message.WorkResponse;
@@ -141,16 +141,16 @@ public class NetworkManager {
 
     private NetworkState manageNetworkInt(WorkSharer workSharer, NetworkState previousState) {
         assert previousState == NetworkState.AWAKE;
-        if (workSharer.isComplete()) return modelFound();
+        if (workSharer.isComplete()) return modelFound(workSharer);
         NetworkState checkMailState = checkMailbox(workSharer, previousState);
         assert !isHibernating(checkMailState);
         if (isShutDown(checkMailState)) return checkMailState;
         NetworkState workRequestState = makeWorkRequest(workSharer, checkMailState);
-        if (workSharer.isComplete()) return modelFound();
+        if (workSharer.isComplete()) return modelFound(workSharer);
         assert !(workSharer.needsWork() && isAwake(workRequestState));
         if (isHibernating(workRequestState)) {
             NetworkState afterHibernateState = hibernate(workSharer,workRequestState);
-            if (workSharer.isComplete()) return modelFound();
+            if (workSharer.isComplete()) return modelFound(workSharer);
             assert !isHibernating(afterHibernateState);
             assert !(workSharer.needsWork() && isAwake(afterHibernateState));
             return afterHibernateState;
@@ -158,16 +158,6 @@ public class NetworkManager {
         else {
             return workRequestState;
         }
-    }
-    
-    private void logStartTime() {
-        long startTime = System.currentTimeMillis();
-        log("start: "+startTime+"\n");
-    }
-    
-    private void logStopTime() {
-        long stopTime = System.currentTimeMillis();
-        log("stop: "+stopTime+"\n");
     }
 
     private NetworkState checkMailbox(WorkSharer workSharer, NetworkState previousState) {
@@ -332,14 +322,14 @@ public class NetworkManager {
         return previousState;
     }
     
-    public void triviallyUnsat() {
-        comm.sendResult(new SatResult(false));
+    public void triviallyUnsolvable(WorkSharer workSharer) {
+        comm.sendResult(new ResultMessage(workSharer.getFailureMessage()));
         comm.broadcastShutDownNetwork();
         shutdown();
     }
 
     public NetworkState networkExhausted(NetworkState previousState) {
-        comm.sendResult(new SatResult(false));
+        comm.sendResult(new ResultMessage(false));
         comm.broadcastShutDownNetwork();
         return shutdown();
     }
@@ -350,9 +340,9 @@ public class NetworkManager {
         hibernationTime = initHibernate;
     }
 
-    private NetworkState modelFound() {
+    private NetworkState modelFound(WorkSharer workSharer) {
         log("Satisfying model found");
-        comm.sendResult(new SatResult(true));
+        comm.sendResult(new ResultMessage(workSharer.getSuccessMessage()));
         comm.broadcastShutDownNetwork();
         return shutdown();
     }

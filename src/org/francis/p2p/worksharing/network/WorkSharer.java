@@ -13,8 +13,6 @@ public interface WorkSharer {
     
     public abstract boolean isComplete();
     
-    public abstract boolean isTriviallyUnsolvable();
-    
     public abstract Object getSuccessMessage();
     
     public abstract Object getFailureMessage();

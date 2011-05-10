@@ -1,7 +1,6 @@
 package org.francis.p2p.worksharing.network.message;
 
 import java.io.Serializable;
-import java.util.List;
 
 import org.francis.p2p.worksharing.network.WorkerId;
 

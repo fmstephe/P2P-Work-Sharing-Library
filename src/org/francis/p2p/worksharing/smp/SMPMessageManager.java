@@ -6,7 +6,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import org.francis.p2p.worksharing.network.message.NetworkMessage;
-import org.francis.p2p.worksharing.network.message.SatResult;
+import org.francis.p2p.worksharing.network.message.ResultMessage;
 import org.francis.p2p.worksharing.network.message.ShutDownNetwork;
 
 public class SMPMessageManager {
@@ -22,7 +22,7 @@ public class SMPMessageManager {
         resultQueue = new LinkedBlockingQueue<NetworkMessage>();
     }
     
-    public void sendResult(SatResult result) {
+    public void sendResult(ResultMessage result) {
         try {
             resultQueue.put(result);
         } catch (InterruptedException e) {
@@ -30,27 +30,27 @@ public class SMPMessageManager {
         }
     }
     
-    public SatResult receiveResult() {
+    public ResultMessage receiveResult() {
         try {
-            return (SatResult)resultQueue.take();
+            return (ResultMessage)resultQueue.take();
         } catch (InterruptedException e) {
             throw new RuntimeException(e); // Right now there is no reason this should be interrupted
         }
     }
     
-    public SatResult receiveResult(long timeout) {
+    public ResultMessage receiveResult(long timeout) {
         try {
-            return (SatResult)resultQueue.poll(timeout, TimeUnit.MILLISECONDS);
+            return (ResultMessage)resultQueue.poll(timeout, TimeUnit.MILLISECONDS);
         }
         catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
     
-    public SatResult receiveResultOrShutDown(long timeout) {
-        SatResult result = null;
+    public ResultMessage receiveResultOrShutDown(long timeout) {
+        ResultMessage result = null;
         try {
-            result = (SatResult)resultQueue.poll(timeout, TimeUnit.MILLISECONDS);
+            result = (ResultMessage)resultQueue.poll(timeout, TimeUnit.MILLISECONDS);
         }
         catch (InterruptedException e) {
             this.shutDownNetwork();

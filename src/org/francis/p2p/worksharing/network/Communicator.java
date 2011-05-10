@@ -2,7 +2,7 @@ package org.francis.p2p.worksharing.network;
 
 import org.francis.p2p.worksharing.network.message.NetworkMessage;
 import org.francis.p2p.worksharing.network.message.PropagatableMessage;
-import org.francis.p2p.worksharing.network.message.SatResult;
+import org.francis.p2p.worksharing.network.message.ResultMessage;
 import org.francis.p2p.worksharing.network.message.WorkRequest;
 
 public interface Communicator {
@@ -23,7 +23,7 @@ public interface Communicator {
 
     public abstract void propagateMessage(PropagatableMessage msg);
 
-    public abstract void sendResult(SatResult result);
+    public abstract void sendResult(ResultMessage result);
     
     public abstract boolean isPoisonWorkRequest(WorkRequest message);
 
